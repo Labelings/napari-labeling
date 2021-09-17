@@ -3,3 +3,7 @@
 # See also: https://caremad.io/posts/2013/07/setup-vs-requirement/
 
 -e .
+
+setuptools~=49.6.0
+numpy~=1.20.3
+labeling~=0.1.4

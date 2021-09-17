@@ -1,19 +1,16 @@
 """
-This module is an example of a barebones numpy reader plugin for napari.
 
-It implements the ``napari_get_reader`` hook specification, (to create
-a reader plugin) but your plugin may choose to implement any of the hook
-specifications offered by napari.
+It implements the ``napari_get_reader`` hook specification to create
+a reader plugin)
 see: https://napari.org/docs/dev/plugins/hook_specifications.html
 
-Replace code below accordingly.  For complete documentation see:
-https://napari.org/docs/dev/plugins/for_plugin_developers.html
 """
 import numpy as np
+from labeling import Labeling
 from napari_plugin_engine import napari_hook_implementation
 
 
-@napari_hook_implementation
+@napari_hook_implementation()
 def napari_get_reader(path):
     """A basic implementation of the napari_get_reader hook specification.
 
@@ -35,9 +32,8 @@ def napari_get_reader(path):
         path = path[0]
 
     # if we know we cannot read the file, we immediately return None.
-    if not path.endswith(".npy"):
+    if not path.endswith(".bson"):
         return None
-
     # otherwise we return the *function* that can read ``path``.
     return reader_function
 
@@ -67,12 +63,14 @@ def reader_function(path):
     # handle both a string and a list of strings
     paths = [path] if isinstance(path, str) else path
     # load all files into array
-    arrays = [np.load(_path) for _path in paths]
-    # stack arrays into single array
-    data = np.squeeze(np.stack(arrays))
+    labeling = Labeling.Labeling.from_file(paths[0])
+    data = labeling.img
+    labels = labeling.labels
+
 
     # optional kwargs for the corresponding viewer.add_* method
     add_kwargs = {}
-
+    label_kwargs = {}
     layer_type = "image"  # optional, default is "image"
+    # , (labels.labelSets, label_kwargs, "labels")
     return [(data, add_kwargs, layer_type)]
