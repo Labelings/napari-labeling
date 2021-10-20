@@ -64,13 +64,20 @@ def reader_function(path):
     paths = [path] if isinstance(path, str) else path
     # load all files into array
     labeling = Labeling.Labeling.from_file(paths[0])
-    data = labeling.img
-    labels = labeling.labels
+    img, data = labeling.get_result()
 
 
-    # optional kwargs for the corresponding viewer.add_* method
-    add_kwargs = {}
-    label_kwargs = {}
-    layer_type = "image"  # optional, default is "image"
-    # , (labels.labelSets, label_kwargs, "labels")
-    return [(data, add_kwargs, layer_type)]
+
+    label_to_pixel = {}
+    for key, value in data.labelSets.items():
+        for v in value:
+            if v not in label_to_pixel:
+                label_to_pixel[v] = []
+            label_to_pixel[v].append(int(key))
+
+    layers = [(img, {"metadata": {"labeling": vars(data), "label_to_pixel": label_to_pixel}}, "image")]
+
+    for key, value in label_to_pixel.items():
+        label = np.asarray(np.isin(img, value), dtype=np.uint8)
+        #layers.append((label, {"name": key}, "labels"))
+    return layers
