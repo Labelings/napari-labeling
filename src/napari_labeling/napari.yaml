@@ -1,0 +1,41 @@
+name: napari-labeling
+display_name: napari Labeling
+contributions:
+  commands:
+    - id: napari-labeling.get_reader
+      python_name: napari_labeling._reader:napari_get_reader
+      title: Open data with napari Labeling
+    - id: napari-labeling.write_multiple
+      python_name: napari_labeling._writer:write_multiple
+      title: Save multi-layer data with napari Labeling
+    - id: napari-labeling.write_single_image
+      python_name: napari_labeling._writer:write_single_image
+      title: Save image data with napari Labeling 
+    - id: napari-labeling.make_qwidget
+      python_name: napari_labeling._widget:ExampleQWidget
+      title: Make example QWidget
+    - id: napari-labeling.make_magic_widget
+      python_name: napari_labeling._widget:example_magic_widget
+      title: Make example magic widget
+    - id: napari-labeling.make_func_widget
+      python_name: napari_labeling._widget:example_function_widget
+      title: Make example function widget 
+  readers:
+    - command: napari-labeling.get_reader
+      accepts_directories: false
+      filename_patterns: ['*.npy'] 
+  writers:
+    - command: napari-labeling.write_multiple
+      layer_types: ['image*','labels*']
+      filename_extensions: []
+    - command: napari-labeling.write_single_image
+      layer_types: ['image']
+      filename_extensions: ['.npy'] 
+  widgets:
+    - command: napari-labeling.make_qwidget
+      display_name: Example QWidget
+    - command: napari-labeling.make_magic_widget
+      display_name: Example Magic Widget
+    - command: napari-labeling.make_func_widget
+      autogenerate: true
+      display_name: Example Function Widget 
