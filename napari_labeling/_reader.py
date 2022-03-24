@@ -68,16 +68,16 @@ def reader_function(path):
 
 
 
-    label_to_pixel = {}
+    segment_to_fragment = {}
     for key, value in data.labelSets.items():
         for v in value:
-            if v not in label_to_pixel:
-                label_to_pixel[v] = []
-            label_to_pixel[v].append(int(key))
+            if v not in segment_to_fragment:
+                segment_to_fragment[v] = set()
+            segment_to_fragment[v].add(int(key))
 
-    layers = [(img, {"metadata": {"labeling": vars(data), "label_to_pixel": label_to_pixel}}, "image")]
+    layers = [(img, {"metadata": {"labeling": vars(data), "segment_to_fragment": segment_to_fragment}}, "image")]
 
-    for key, value in label_to_pixel.items():
+    for key, value in segment_to_fragment.items():
         label = np.asarray(np.isin(img, value), dtype=np.uint8)
         #layers.append((label, {"name": key}, "labels"))
     return layers
