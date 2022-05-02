@@ -67,9 +67,10 @@ docs/_build/
 target/
 
 # Pycharm and VSCode
-.idea/
+.idea/*
 venv/
 .vscode/
+models/*
 
 # IPython Notebook
 .ipynb_checkpoints

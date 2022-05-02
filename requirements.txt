@@ -3,3 +3,17 @@
 # See also: https://caremad.io/posts/2013/07/setup-vs-requirement/
 
 -e .
+
+numpy~=1.20.3
+QtPy~=2.0.0
+pyparsing~=3.0.6
+setuptools~=59.8.0
+packaging~=21.3
+pymongo~=3.11.0
+labeling~=0.1.5
+napari~=0.4.12
+pytest~=7.0.1
+magicgui~=0.3.7
+tomli~=2.0.1
+jinja2~=3.0.3
+typing_extensions~=4.1.1
