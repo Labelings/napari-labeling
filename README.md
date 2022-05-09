@@ -7,7 +7,18 @@
 [![codecov](https://codecov.io/gh/tomburke-rse/napari-labeling/branch/main/graph/badge.svg)](https://codecov.io/gh/tomburke-rse/napari-labeling)
 [![napari hub](https://img.shields.io/endpoint?url=https://api.napari-hub.org/shields/napari-labeling)](https://napari-hub.org/plugins/napari-labeling)
 
-A simple plugin to use with napari
+This is a napari-plugin based on the [labeling project].
+
+It allows the generation of overlapping labels in one layer, save and load of this layer in a json-based file format and
+it contains a widget to explore the overlapping labels layer and select specific segments with a mouse click .
+
+Please note that currently, the widget part only works by adding it through code with:
+
+    from napari_labeling import edit_widget
+    viewer = napari.Viewer()
+    viewer.window.add_dock_widget(edit_widget)
+
+An example on how to achieve this can be found in the [main.py] on GitHub.
 
 ----------------------------------
 
@@ -59,3 +70,6 @@ If you encounter any problems, please [file an issue] along with a detailed desc
 [tox]: https://tox.readthedocs.io/en/latest/
 [pip]: https://pypi.org/project/pip/
 [PyPI]: https://pypi.org/
+
+[labeling project]: https://github.com/Labelings/Labeling
+[main.py]: https://github.com/Labelings/Labeling/blob/main/main.py

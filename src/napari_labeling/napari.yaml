@@ -21,9 +21,8 @@ contributions:
   writers:
     - command: napari-labeling.write_single_image
       layer_types: ['labels']
-      filename_extensions: ['*.tif']
   widgets:
     - command: napari-labeling.make_magic_widget
-      display_name: Labeling Magicgui
+      display_name: Labeling Explorer
     - command: napari-labeling.make_create_widget
       display_name: Create multi-layer labels

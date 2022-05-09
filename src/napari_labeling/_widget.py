@@ -1,17 +1,7 @@
-"""
-This module is an example of a barebones QWidget plugin for napari
-
-It implements the Widget specification.
-see: https://napari.org/plugins/stable/npe2_manifest_specification.html
-
-Replace code below according to your needs.
-"""
-
 import napari
 import numpy as np
 from magicgui import magicgui
 from labeling import Labeling
-from copy import deepcopy
 
 
 @magicgui(auto_call=True,
@@ -21,9 +11,9 @@ from copy import deepcopy
                                  "orientation": "horizontal",
                                  "choices": [("Fragment", False), ("Segment", True)]},
           selection={'label': 'Enable Selection', 'widget_type': 'CheckBox', 'enabled': False},
-          clear_selection_func={'widget_type': 'PushButton', 'label': 'test', 'visible': True}
+          clear_selection_func={'widget_type': 'PushButton', 'label': 'Clear Selection', 'visible': True}
           )
-def edit_widget(img_layer: "napari.layers.Label", enable_highlighting: bool = False,
+def edit_widget(img_layer: "napari.layers.Labels", enable_highlighting: bool = False,
                  fragment_highlighting: bool = False, selection: bool = False,
                  clear_selection_func=True):
     pass
@@ -47,7 +37,7 @@ def toggle_highlighting(state: bool):
         active_layer.mouse_move_callbacks.append(highlight)
         active_layer.mouse_drag_callbacks.append(add_remove_segments)
         viewer.add_labels(data=np.zeros(active_layer.level_shapes[0], dtype=np.int8),
-                          name="highlight")
+                          name="highlight", seed=1.0)
         viewer.layers.selection.select_only(active_layer)
         edit_widget.selection.enabled = True
     else:
@@ -104,9 +94,8 @@ def add_remove_segments(layer, event):
         labeling.add_image(
             np.asarray(np.isin(layer.data, list(segment_to_fragment[list_of_segments[0]])), dtype=np.uint8))
         img, label = labeling.get_result(True)
-        print(vars(label)["labelSets"])
         selection_layer.data = img.astype(np.uint8)
-        selection_layer.metadata["segment_to_fragment"] = labeling.__segment_fragment_mapping()
+        selection_layer.metadata["segment_to_fragment"] = labeling._Labeling__segment_fragment_mapping()
         selection_layer.metadata["labeling"] = vars(label)
     elif event.type == "mouse_press" and event.button == 2 and edit_widget.selection.value:
         if "selection" not in viewer.layers:
@@ -123,7 +112,7 @@ def remove_segment_from_selection(selection_layer, val):
     img, label = labeling.get_result(True)
     selection_layer.data = img.astype(np.uint8)
     selection_layer.metadata["labeling"] = vars(label)
-    selection_layer.metadata["segment_to_fragment"] = labeling.__segment_fragment_mapping()
+    selection_layer.metadata["segment_to_fragment"] = labeling._Labeling__segment_fragment_mapping()
 
 def split_layer(layer, event):
     viewer = napari.current_viewer()

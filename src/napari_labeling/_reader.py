@@ -1,14 +1,3 @@
-"""
-This module is an example of a barebones numpy reader plugin for napari.
-
-It implements the Reader specification, but your plugin may choose to
-implement multiple readers or even other plugin contributions. see:
-https://napari.org/plugins/stable/npe2_manifest_specification.html
-
-Replace code below accordingly.  For complete documentation see:
-https://napari.org/docs/dev/plugins/index.html
-"""
-import numpy as np
 from labeling.Labeling import Labeling
 
 
@@ -67,6 +56,7 @@ def reader_function(path):
     # load all files into array
     labeling = Labeling.from_file(paths[0])
     img, data = labeling.get_result(True)
-    layers = [(img, {"metadata": {"labeling": vars(data), "segment_to_fragment": labeling.__segment_fragment_mapping()}}, "labels")]
+    layers = [(img, {"metadata": {"labeling": vars(data), "segment_to_fragment": labeling._Labeling__segment_fragment_mapping(),
+                                  "labeling_obj": labeling}}, "labels")]
 
     return layers
