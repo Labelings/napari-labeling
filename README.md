@@ -73,3 +73,4 @@ If you encounter any problems, please [file an issue] along with a detailed desc
 
 [labeling project]: https://github.com/Labelings/Labeling
 [main.py]: https://github.com/Labelings/Labeling/blob/main/main.py
+[file an issue]: https://github.com/Labelings/napari-labeling/issues
