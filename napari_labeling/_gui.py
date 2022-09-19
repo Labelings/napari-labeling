@@ -1,7 +1,5 @@
 import numpy as np
-from napari._qt.qthreading import thread_worker
-from napari.utils.translations import trans
-from qtpy.QtWidgets import QWidget, QGridLayout, QPushButton, QComboBox, QCheckBox, QLabel, QFileDialog, QRadioButton, QButtonGroup
+from qtpy.QtWidgets import QWidget, QGridLayout, QCheckBox, QRadioButton, QButtonGroup
 from napari_plugin_engine import napari_hook_implementation
 from labeling import Labeling
 from copy import deepcopy
@@ -45,6 +43,12 @@ class LabelingWidget(QWidget):
         self.setLayout(layout)
 
     def toggle_highlighting(self, state):
+        """
+        Sets and removes callback event handlers as well as add a highlight label layer.
+
+        :param state:
+        :return:
+        """
         if state == 2:
             active_layer = [x for x in self.viewer.layers.selection][0]
             active_layer.mouse_move_callbacks.append(self.highlight)
@@ -58,21 +62,35 @@ class LabelingWidget(QWidget):
             active_layer.mouse_drag_callbacks.remove(self.add_remove_segments)
 
     def highlight(self, layer, event):
+        """
+        Adds highlighting in the highlight layer depending on selection.
+        If fragment highlighting is true, fragments will be highlighted,
+        otherwise segments. If no label is in the metadata or it's background,
+        nothing is highlighted.
+
+        :param layer:
+        :param event:
+        :return:
+        """
         cords = np.round(layer.world_to_data(self.viewer.cursor.position)).astype(int)
         val = layer.get_value(cords)
+        # background
         if val == 0 or val is None:
             return
+        # value not in list, happens with uncleaned data
         label_list = layer.metadata["labeling"]["labelSets"][str(val)]
         if len(label_list) == 0:
             highlight_layer = self.viewer.layers["highlight"]
             highlight_layer.data = np.zeros(layer.data.shape, dtype=np.uint8)
             return
+        # highlights fragments
         if self.fragment_highlighting:
             marking = [int(x) for x, y in layer.metadata["labeling"]["labelSets"].items() if
                        any((True for a in label_list if a in y))]
             if marking is not None and len(marking) > 0:
                 highlight_layer = self.viewer.layers["highlight"]
                 highlight_layer.data = np.asarray(np.isin(layer.data, marking), dtype=np.uint8) * layer.data
+        # highlights segments
         else:
             data = np.zeros(layer.data.shape, np.int8)
             for idx, label in enumerate(label_list):
@@ -83,6 +101,16 @@ class LabelingWidget(QWidget):
             highlight_layer.data = data
 
     def add_remove_segments(self, layer, event):
+        """
+        If segment selection is enabled, a left click will add
+        it to a new layer, the selection layer while a right mouse click
+        will remove the segment from the selection layer.
+        A Labeling object will be created for the selection layer and
+        updated every time something changes.
+        :param layer:
+        :param event:
+        :return:
+        """
         if event.type == "mouse_press" and event.button == 1 and self.segment_select:
             val = layer.get_value(event.position, world=False)
             if "selection" not in self.viewer.layers:
@@ -149,7 +177,6 @@ class LabelingWidget(QWidget):
             selection_layer.metadata["labeling_obj"] = labeling
             selection_layer.metadata["labeling"] = vars(label)
             selection_layer.metadata["segment_to_fragment"] = segment_to_fragment
-
 
     def select_button(self, btn):
         if btn.text() == "Highlight":
